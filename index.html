@@ -6,141 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.6.1/Sortable.min.js"></script>
-    <title>業務系統進度</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        :root {
-            --theme: dimgray;
-            --none: red;
-            --ing: green;
-            --done: blue;
-        }
-
-        body {
-            display: flex;
-            flex-flow: column;
-            justify-content: center;
-            align-items: center;
-            padding: 5rem;
-            gap: 5rem;
-            background-color: var(--theme);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        header {
-            width: 60%;
-            height: 20%;
-        }
-
-        fieldset {
-            font-size: 2rem;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            padding: 1em;
-            position: relative;
-        }
-
-        fieldset::before {
-            content: '代辦事項';
-            position: absolute;
-            font-size: 2em;
-            top: 0;
-            left: 50%;
-            transform: translate(-50%, -80%);
-            background-color: var(--theme);
-            padding-inline: .5em;
-        }
-
-        form {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        form input {
-            flex: 1;
-            font-size: 1em;
-            padding: .1em .3em;
-        }
-
-        form button {
-            font-size: .75em;
-            padding: .3em .5em;
-        }
-
-        main {
-            width: 80%;
-            height: 100%;
-        }
-
-        #boards {
-            width: 100%;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-
-        .board:nth-child(1) {
-            --color: var(--none)
-        }
-
-        .board:nth-child(2) {
-            --color: var(--ing)
-        }
-
-        .board:nth-child(3) {
-            --color: var(--done)
-        }
-
-        .board {
-            display: flex;
-            flex-flow: column;
-            border: 3px solid var(--color);
-            padding: 1rem;
-            gap: 1rem;
-        }
-
-        .board .title {
-            text-align: center;
-        }
-
-        .board .list {
-            height: 100%;
-            display: flex;
-            flex-flow: column;
-            gap: 1rem;
-        }
-
-        .item {
-            width: 100%;
-            font-size: 2rem;
-            padding: .5em 1em;
-            background-color: var(--color);
-            cursor: pointer;
-        }
-
-        .upload_btn {
-            font-size: 3rem;
-            padding: .3em .5em;
-            border-radius: 1rem;
-            background-color: limegreen;
-            box-shadow: inset 0em 0em .3em currentColor;
-            border: 0;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <title>代辦清單練習</title>
 </head>
 
 <body>
     <header>
+        <h1>代辦清單</h1>
         <fieldset>
             <form>
                 <label for="newItem">新增事項</label>
@@ -166,73 +39,6 @@
         </div>
     </main>
     <button type="button" class="upload_btn" onclick="uploads()">本地保存</button>
-
-    <script>
-        const form = document.querySelector('form')
-        form.addEventListener('submit', (e) => {
-            e.preventDefault()
-        })
-        const newItem = document.querySelector('#newItem')
-        const addBtn = document.querySelector('#add-newItem')
-        const newItem_board = document.querySelector(`.board.new .list`)
-
-        addBtn.addEventListener('click', addNewItem)
-        window.addEventListener('keyup', e => {
-            if (e.key == 'Enter') {
-                addNewItem()
-                newItem.value = ''
-            }
-        })
-
-        function addNewItem() {
-            if (!newItem.value) {
-                alert('事項沒打')
-                return
-            }
-            newItem_board.innerHTML += `<div class="item">${newItem.value}</div>`
-        }
-
-        function setData(state) {
-            const items = localStorage.getItem(`${state}List`)
-            if (!items) {
-                return
-            }
-            const itemList = items.split(',')
-            const item_board = document.querySelector(`.board.${state} .list`)
-            for (let i = 0; i < itemList.length; i++) {
-                item_board.innerHTML += `<div class="item">${itemList[i]}</div>`
-            }
-        }
-        setData('new')
-        setData('ing')
-        setData('done')
-
-        const boards = document.querySelectorAll('.board .list')
-        boards.forEach(i => {
-            Sortable.create(i, {
-                group: "items",
-                animation: 300,
-                filter: '.title',
-                ignore: '.title',
-            })
-        })
-
-        function upload(state) {
-            const items = document.querySelectorAll(`.board.${state} .item`)
-            const itemList = [...items].map(i => i.textContent)
-
-            localStorage.setItem(`${state}List`, itemList)
-        }
-        function uploads() {
-            upload('new')
-            upload('ing')
-            upload('done')
-            alert('上傳成功')
-        }
-
-
-
-    </script>
 </body>
 
 </html>
